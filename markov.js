@@ -55,6 +55,9 @@
     var Markov = function () {
         var
 
+        PROCESSING_MAX_TIME = 100, // maximum time to spend processing an array element (in milliseconds)
+        PROCESSING_WAIT_TIME = 20, // time to wait between processing array elements (in milliseconds)
+
         self = this,
 
         strings = {
@@ -65,6 +68,9 @@
 
         // Last generated string
         prevString = '',
+
+        isString = function (obj) { return String(obj) === obj },
+        isArray  = function (obj) { return obj.constructor === Array },
 
         /**
          * Selects a random item from a given array
@@ -84,21 +90,99 @@
          */
         trim = function (string) {
             return string.replace(/^\s+|\s+$/g, '');
-        };
+        },
 
         /**
-         * Loads string data from an array
-         * Required before any generate() call
+         * Counts the elements in a dictionary
+         * @param  {Dictionary} dict
+         * @return {int}
+         */
+        count = function (dict) {
+            var count = 0;
+            for (key in dict) {
+                if (dict.hasOwnProperty(key)) count++;
+            }
+            return count;
+        },
+
+        /**
+         * Loads data from a JSON url
+         *
+         * @param  {String} url
+         * @param  {Function} successHandler
+         * @param  {Function} errorHandler
+         * @return {void}
+         */
+        loadURL = function (url, onSuccess, onError) {
+            var xhr;
+            xhr = typeof XMLHttpRequest != 'undefined' ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+            xhr.open('get', url, true);
+            xhr.onreadystatechange = function() {
+                var status, data;
+                if (xhr.readyState == 4) { // DONE
+                    status = xhr.status;
+                    if (status == 200) {
+                        data = JSON.parse(xhr.responseText);
+                        loadArray(data, onSuccess);
+                    } else {
+                        onError && onError(status);
+                        throw "Could not complete ajax request: errored with status code " + status +
+                                "\n See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/status " +
+                                "for more information";
+                    }
+                }
+            };
+            xhr.send();
+        },
+
+        /**
+         * Loads data from an array
          *
          * @param  {String[]} array
          * @return {void}
          */
-        self.load = function (array) {
-            var i;
-            for(i = 0; i < array.length; i++) {
-                self.add(array[i]);
+        loadArray = function (array, callback) {
+            var queue;
+            queue = array.concat();
+
+            setTimeout(function () {
+                var endtime = +new Date() + PROCESSING_MAX_TIME;
+                do {
+                    chunk = queue.shift();
+                    self.add(chunk);
+                } while (queue.length > 0);
+
+                if (queue.length > 0) {
+                    setTimeout(arguments.callee, PROCESSING_WAIT_TIME);
+                } else {
+                    callback.call(self);
+                }
+            }, PROCESSING_WAIT_TIME);
+        };
+
+        /**
+         * Loads string data from an array or JSON file
+         * Required before any generate() call
+         *
+         * @param  {String[] or String} arg
+         * @return {void}
+         */
+        self.load = function () {
+            if (arguments.length > 0) {
+                if (isArray(arguments[0])) {
+                    loadArray(arguments[0], arguments[1]);
+                } else if (isString(arguments[0])) {
+                    loadURL(arguments[0], arguments[1], arguments[2]);
+                } else {
+                    throw "Invalid argument type. load() requires either an array of strings or the path to a " +
+                        "JSON data file.";
+                }
+            } else {
+                throw "No argument given. load() requires either an array of strings or the path to a " +
+                    "JSON data file.";
             }
         };
+
 
         /**
          * Adds a string to the dataset
@@ -144,14 +228,15 @@
         /**
          * Generates a Markov chain using the current dataset
          *
+         * @param {int} The maximum number of words in the string
          * @return {String}
          */
         self.generate = function () {
             // Don't continue if there is no data
-            if (strings.mappings.length <= 0) {
+            if (count(strings.mappings) <= 0) {
                 throw "No strings to generate from (did you forget a load() call?)";
             } else {
-                var word, string, returnStr;
+                var word, string, return_str;
 
                 // Get a random word to begin the text with
                 word = getRandomString(strings.beginning);
@@ -162,27 +247,26 @@
                     word = getRandomString(strings.mappings[word]);
                     string.push(word);
                 }
-                console.log(strings);
+
                 // Merge together the string array
-                returnStr = string.join(' ');
+                return_str = string.join(' ');
 
                 // Run it again if the string came back empty
                 // or is a duplicate
-                if ((returnStr.length == 0) ||
-                    (returnStr == prevString)) {
-                    returnStr = self.generate();
+                if ((return_str.length == 0) ||
+                    (return_str == prevString)) {
+                    return_str = self.generate();
                 }
 
-                prevString = returnStr;
+                prevString = return_str;
 
-                return returnStr;
+                return return_str;
             }
         };
 
         // Load dataset if it was passed into the constructor
-        if ((arguments.length === 1) &&
-            (arguments[0].constructor === Array)) {
-            self.load(arguments[0]);
+        if (arguments.length > 0) {
+            self.load.apply(this, arguments);
         }
     };
 

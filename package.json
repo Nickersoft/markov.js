@@ -1,11 +1,8 @@
 {
-  "name": "markov",
+  "name": "markov.js",
   "version": "0.0.1",
   "description": "A small library for generating strings using Markov chains",
   "main": "markov.js",
-  "scripts": {
-    "test": "node_modules/.bin/karma start"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Nickersoft/markov.git"
