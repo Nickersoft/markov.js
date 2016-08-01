@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "A small library for generating strings using Markov chains",
   "main": "markov.js",
+  "scripts": {
+    "build": "node_modules/.bin/uglifyjs markov.js -o markov.min.js --comments",
+    "prepublish": "npm run build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Nickersoft/markov.git"
@@ -19,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/Nickersoft/markov/issues"
   },
-  "homepage": "https://github.com/Nickersoft/markov#readme"
+  "homepage": "https://github.com/Nickersoft/markov#readme",
+  "devDependencies": {
+    "uglifyjs": "^2.4.10"
+  }
 }
