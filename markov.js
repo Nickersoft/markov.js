@@ -114,15 +114,20 @@
          * @return {void}
          */
         loadURL = function (url, onSuccess, onError) {
-            var xhr;
+            var xhr, rtext;
             xhr = typeof XMLHttpRequest != 'undefined' ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
             xhr.open('get', url, true);
             xhr.onreadystatechange = function() {
                 var status, data;
-                if (xhr.readyState == 4) { // DONE
+                if (xhr.readyState == 4) { // readyState 4 = DONE
                     status = xhr.status;
                     if (status == 200) {
-                        data = JSON.parse(xhr.responseText);
+                        rtext = xhr.responseText;
+                        try { // First try parsing as JSON
+                            data = JSON.parse(rtext);
+                        } catch (e) { // If not, assume raw text
+                            data = rtext.split('\n');
+                        }
                         loadArray(data, onSuccess);
                     } else {
                         onError && onError(status);

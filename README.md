@@ -11,7 +11,7 @@ var markov = new Markov(data, function () {
 });
 ```
 
-where `data` can either be a string dataset in the form of an array, or the path to a JSON file containing strings. The constructor also takes a success callback which fires after the dataset has been successfully loaded. All `generate()` calls should be called in this callback. If you are loading a JSON file over AJAX, you can pass in a second callback which will fire if an error occurs loading the data from file.
+where `data` can either be a string dataset in the form of an array, or the path to a data file containing strings. This file must be either valid JSON or a list of strings separated by new lines. The constructor also takes a success callback which fires after the dataset has been successfully loaded. All `generate()` calls should be called in this callback. If you are loading a JSON file over AJAX, you can pass in a second callback which will fire if an error occurs loading the data from file.
 
 If you need to add a string after the initial dataset has already loaded, simply call `add()`:
 
