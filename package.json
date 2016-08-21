@@ -5,6 +5,7 @@
   "main": "markov.js",
   "scripts": {
     "build": "node_modules/.bin/uglifyjs markov.js -o markov.min.js --comments",
+    "test": "node_modules/.bin/karma start",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -25,6 +26,12 @@
   },
   "homepage": "https://github.com/Nickersoft/markov#readme",
   "devDependencies": {
+    "jasmine-core": "^2.4.1",
+    "karma": "^1.2.0",
+    "karma-coverage": "^1.1.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-jasmine": "^1.0.2",
+    "karma-mocha-reporter": "^2.1.0",
     "uglifyjs": "^2.4.10"
   }
 }

@@ -1,4 +1,4 @@
-# M A R K O V #
+# M A R K O V [![Build Status](https://travis-ci.org/Nickersoft/markov.js.svg?branch=master)](https://travis-ci.org/Nickersoft/markov.js)
 
 ### What is Markov?
 Markov is a small library for generating strings using Markov chains. [Markov chains](https://en.wikipedia.org/wiki/Markov_chain), by definition, "define a sequence of possible events in which the probability of each event depends only on the state attained in the previous event". These chains are often used to generate random strings by chaining text together from a pre-existing dataset. A cool example of these chains in action is the [What Would I Say?](http://what-would-i-say.com/) website, which uses your past Facebook posts to generate new, often nonsensical ones. This library is designed to make building those kinds of websites easier.
