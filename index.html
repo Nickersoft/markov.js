@@ -3,97 +3,60 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Markov.js by Nickersoft</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-dark.css">
-    <script src="javascripts/scale.fix.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <title>Markov.js by Nickersoft</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Markov.js</h1>
-        <p>A small library for generating strings using Markov chains</p>
-        <p class="view"><a href="https://github.com/Nickersoft/markov.js">View the Project on GitHub <small>Nickersoft/markov.js</small></a></p>
-        <ul>
-          <li><a href="https://github.com/Nickersoft/markov.js/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/Nickersoft/markov.js/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/Nickersoft/markov.js">View On <strong>GitHub</strong></a></li>
+    <main>
+        <div class="logo">
+            <img class="icon" src="images/icon.svg" />
+            <img class="text" src="images/text.svg"  />
+        </div>
+        <ul class="nav">
+            <li>
+                <a class="button" href="https://github.com/Nickersoft/markov.js" target="_blank">
+                    <i class="fa fa-github"></i>
+                    Github
+                </a>
+            </li>
+            <li>
+                <a class="button" href="https://npmjs.com/package/markov.js" target="_blank">
+                    <i class="fa fa-download"></i>
+                    NPM
+                </a>
+            </li>
         </ul>
-      </header>
-      <section>
-        <h1>
-<a id="m-a-r-k-o-v" class="anchor" href="#m-a-r-k-o-v" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>M A R K O V</h1>
+        <span class="plug">Created by <a href="http://tylernickerson.com" target="_blank">this kid here</a>.</span>
+        <div class="separator"></div>
+        <div class="quote">
+            <div id="quoteBody" class="body"></div>
+            <div class="sub">
+                &ndash; <a target="_blanK"
+                     href="http://www.politico.com/story/2016/07/full-transcript-donald-trump-nomination-acceptance-speech-at-rnc-225974">
+                     TrumpBot
+                 </a><br/>
+                (Powered by Markov.js)
+            </div>
+        </div>
+    </main>
+    <script src="node_modules/markov.js/markov.min.js"></script>
+    <script>
+        var markov = new Markov('data.txt', function () {
+            var self = this;
 
-<h3>
-<a id="what-is-markov" class="anchor" href="#what-is-markov" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is Markov?</h3>
+            function getQuote() {
+                var str = self.generate();
+                // Don't retrieve strings with incomplete quotes
+                if ((str.match('"') || []).length % 2 !== 0) {
+                    str = getQuote();
+                }
+                return str.replace('"', '\'');
+            }
 
-<p>Markov is a small library for generating strings using Markov chains. <a href="https://en.wikipedia.org/wiki/Markov_chain">Markov chains</a>, by definition, "define a sequence of possible events in which the probability of each event depends only on the state attained in the previous event". These chains are often used to generate random strings by chaining text together from a pre-existing dataset. A cool example of these chains in action is the <a href="http://what-would-i-say.com/">What Would I Say?</a> website, which uses your past Facebook posts to generate new, often nonsensical ones. This library is designed to make building those kinds of websites easier.</p>
-
-<p>Using Markov is dead simple:</p>
-
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> markov <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Markov</span>(data, <span class="pl-k">function</span> () {
-    <span class="pl-smi">markov</span>.<span class="pl-en">generate</span>();
-});</pre></div>
-
-<p>where <code>data</code> can either be a string dataset in the form of an array, or the path to a JSON file containing strings. The constructor also takes a success callback which fires after the dataset has been successfully loaded. All <code>generate()</code> calls should be called in this callback. If you are loading a JSON file over AJAX, you can pass in a second callback which will fire if an error occurs loading the data from file.</p>
-
-<p>If you need to add a string after the initial dataset has already loaded, simply call <code>add()</code>:</p>
-
-<div class="highlight highlight-source-js"><pre><span class="pl-smi">markov</span>.<span class="pl-c1">add</span>(<span class="pl-s"><span class="pl-pds">'</span>Hello world<span class="pl-pds">'</span></span>);</pre></div>
-
-<h3>
-<a id="installing-markov" class="anchor" href="#installing-markov" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing Markov</h3>
-
-<p>Markov is super simple to install. Just use NPM:</p>
-
-<pre><code>npm install markov.js
-</code></pre>
-
-<h3>
-<a id="further-examples" class="anchor" href="#further-examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Further Examples</h3>
-
-<p>This library can be rather confusing, here are a few more examples so you get the gist of using Markov:</p>
-
-<h4>
-<a id="loading-from-an-array" class="anchor" href="#loading-from-an-array" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Loading from an Array</h4>
-
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> markov <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Markov</span>([
-    <span class="pl-s"><span class="pl-pds">'</span>This little piggy went to the market<span class="pl-pds">'</span></span>,
-    <span class="pl-s"><span class="pl-pds">'</span>This little piggy stayed home<span class="pl-pds">'</span></span>,
-    <span class="pl-s"><span class="pl-pds">'</span>This little piggy had roast beef<span class="pl-pds">'</span></span>,
-    <span class="pl-s"><span class="pl-pds">'</span>This little piggy had none<span class="pl-pds">'</span></span>,
-    <span class="pl-s"><span class="pl-pds">'</span>And this little piggy went wee wee wee all the way home<span class="pl-pds">'</span></span>
-], <span class="pl-k">function</span> () {
-    <span class="pl-c1">document</span>.<span class="pl-c1">write</span>(
-        <span class="pl-v">this</span>.<span class="pl-en">generate</span>() <span class="pl-c">// And this little piggy went to the way home</span>
-    );
-});</pre></div>
-
-<h4>
-<a id="loading-from-a-json-file" class="anchor" href="#loading-from-a-json-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Loading from a JSON File</h4>
-
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> markov <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Markov</span>(
-    <span class="pl-s"><span class="pl-pds">'</span>data.json<span class="pl-pds">'</span></span>,
-    <span class="pl-k">function</span> () {
-        <span class="pl-c1">document</span>.<span class="pl-c1">write</span>(<span class="pl-v">this</span>.<span class="pl-en">generate</span>());
-    },
-    <span class="pl-k">function</span> (<span class="pl-smi">status</span>) {
-        <span class="pl-k">throw</span> <span class="pl-s"><span class="pl-pds">"</span>Markov AJAX request errored with status code<span class="pl-pds">"</span></span> <span class="pl-k">+</span> status;
-    }
-);</pre></div>
-      </section>
-    </div>
-    <footer>
-      <p>Project maintained by <a href="https://github.com/Nickersoft">Nickersoft</a></p>
-      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
-    </footer>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
+            document.getElementById('quoteBody').innerHTML = getQuote();
+        })
+    </script>
   </body>
 </html>
