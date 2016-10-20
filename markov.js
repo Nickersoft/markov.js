@@ -115,7 +115,16 @@
          */
         loadURL = function (url, onSuccess, onError) {
             var xhr, rtext;
-            xhr = typeof XMLHttpRequest != 'undefined' ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+            if (typeof XMLHttpRequest != 'undefined') {
+                xhr = new XMLHttpRequest();
+            } else {
+                try {
+                    var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+                    xhr = new XMLHttpRequest();
+                } catch (ex) {
+                    xhr = new ActiveXObject('Microsoft.XMLHTTP');
+                }
+            }
             xhr.open('get', url, true);
             xhr.onreadystatechange = function() {
                 var status, data;
